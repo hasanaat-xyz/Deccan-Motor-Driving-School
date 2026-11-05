@@ -525,8 +525,8 @@ export default function App() {
   }
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar no-print">
+    <div className="app-layout" style={{ display: "flex", flexDirection: "row", width: "100%", minHeight: "100vh" }}>
+      <aside className="sidebar no-print" style={{ flexShrink: 0 }}>
         <div className="sidebar-brand">
           <div className="brand-mark">DMDS</div>
           <div>
@@ -596,7 +596,7 @@ export default function App() {
         </button>
       </aside>
 
-      <main className="main-content">
+      <main className="main-content" style={{ flexGrow: 1, minWidth: 0 }}>
         <header className="topbar no-print">
           <div>
             <h1>
