@@ -1043,7 +1043,7 @@ export default function App() {
             <div className="table-actions no-print">
               <button
                 type="button"
-                onClick={loadCandidates}
+                onClick={() => loadCandidates()}
                 disabled={loading}
               >
                 Refresh List

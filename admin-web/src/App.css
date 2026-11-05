@@ -1,9 +1,7 @@
-
-
 * {
-  box-sizing: border-box;
-}
+box-sizing: border-box;
 
+}
 :root {
   font-family: Inter, Arial, sans-serif;
   color: #26332c;
@@ -856,34 +854,9 @@ table,
 ============================== */
 
 @media (max-width: 700px) {
-  .sidebar {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    padding: 16px;
-  }
-
-  .sidebar-brand {
-    padding-bottom: 15px;
-  }
-
-  .sidebar-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
-  }
-
-  .sidebar-nav button {
-    padding: 11px 9px;
-    font-size: 12px;
-  }
-
-  .logout-button {
-    margin-top: 12px;
-  }
+  /* Sidebar and main-content overrides removed so the sidebar stays locked on the left */
 
   .main-content {
-    margin-left: 0;
     padding: 20px 14px 35px;
   }
 
@@ -1000,10 +973,6 @@ table,
 @media (max-width: 380px) {
   .login-card {
     padding: 25px 20px;
-  }
-
-  .sidebar-nav {
-    grid-template-columns: 1fr;
   }
 
   .main-content {
