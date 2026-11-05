@@ -1,10 +1,8 @@
-
 import { useState } from "react";
 import "./App.css";
 
-// Change line 4 from this:
-// admin-web/src/App.jsx line 4
 const API = import.meta.env.VITE_API_URL || "https://deccan-motor-driving-school.onrender.com";
+
 const initialForm = {
   fullName: "",
   fatherName: "",
@@ -284,7 +282,7 @@ export default function App() {
     setLoading(true);
 
     try {
-      const data = await request("/auth/login", {
+      const data = await request("/api/auth/login", {
         method: "POST",
         body: JSON.stringify(loginForm),
       });
@@ -328,7 +326,7 @@ export default function App() {
 
   async function loadCandidates(authToken = token) {
     try {
-      const response = await fetch(`${API}/candidates`, {
+      const response = await fetch(`${API}/api/candidates`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -368,7 +366,7 @@ export default function App() {
 
     try {
       const data = await request(
-        `/candidates/search?phone=${encodeURIComponent(phone)}`
+        `/api/candidates/search?phone=${encodeURIComponent(phone)}`
       );
 
       const results = Array.isArray(data.candidates)
@@ -428,11 +426,8 @@ export default function App() {
 
     const payload = {
       ...form,
-
-      // Keep the existing phone field for compatibility with the API.
       phone: form.phone.trim(),
       mobileNumber1: form.phone.trim(),
-
       fullName: form.fullName.trim(),
       fatherName: form.fatherName.trim(),
       mobileNumber2: form.mobileNumber2.trim(),
@@ -442,13 +437,12 @@ export default function App() {
       fdlNumber: form.fdlNumber.trim(),
       licenseNumber: form.licenseNumber.trim(),
       remarks: form.remarks.trim(),
-
       totalFees,
       paidFees,
     };
 
     try {
-      const data = await request("/candidates", {
+      const data = await request("/api/candidates", {
         method: "POST",
         body: JSON.stringify(payload),
       });
@@ -1118,24 +1112,29 @@ function CandidateTable({ candidates, onView }) {
               <td>{candidate.mobileNumber2 || "—"}</td>
               <td>{formatDate(candidate.admissionDate)}</td>
               <td>
-                {candidate.trainingTimeFrom || candidate.trainingTimeTo
-                  ? `${formatTime(candidate.trainingTimeFrom)} – ${formatTime(candidate.trainingTimeTo)}`
+                {candidate.trainingTimeFrom && candidate.trainingTimeTo
+                  ? `${formatTime(candidate.trainingTimeFrom)} - ${formatTime(candidate.trainingTimeTo)}`
                   : "—"}
               </td>
-              <td>
-                ₹{Number(candidate.totalFees || 0).toLocaleString("en-IN")}
-              </td>
-              <td>
-                ₹{Number(candidate.paidFees || 0).toLocaleString("en-IN")}
-              </td>
+              <td>₹{Number(candidate.totalFees || 0).toLocaleString("en-IN")}</td>
+              <td>₹{Number(candidate.paidFees || 0).toLocaleString("en-IN")}</td>
               <td>₹{getBalance(candidate).toLocaleString("en-IN")}</td>
-              <td>{candidate.trainingStatus || "Not Started"}</td>
+              <td>
+                <span
+                  className={`status-tag ${(candidate.trainingStatus || "Not Started")
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
+                >
+                  {candidate.trainingStatus || "Not Started"}
+                </span>
+              </td>
               <td className="no-print">
                 <button
                   type="button"
+                  className="table-action-button"
                   onClick={() => onView(candidate)}
                 >
-                  View / Print
+                  View Details
                 </button>
               </td>
             </tr>
