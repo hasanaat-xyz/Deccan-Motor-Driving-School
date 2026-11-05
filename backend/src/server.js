@@ -1,0 +1,58 @@
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+
+const connectDB = require("./config/db");
+const candidateRoutes = require("./routes/candidateRoutes");
+const authRoutes = require("./routes/authRoutes");
+const studentRoutes = require("./routes/studentRoutes");
+
+const app = express();
+
+app.use(
+  cors({
+    origin: [
+      "https://driving-school-app-vpqk.vercel.app",
+      "https://driving-school-app-one.vercel.app",
+      "https://driving-school-app-xktv.vercel.app",
+      "https://driving-school-qgk9e0yy7-hasanaat00-8100.vercel.app",
+      "https://driving-school-app-git-main-hasanaat00-8100.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.use(express.json({ limit: "1mb" }));
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Driving School API is running!",
+  });
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/candidates", candidateRoutes);
+app.use("/api/student", studentRoutes);
+
+const PORT = process.env.PORT || 5000;
+
+async function startServer() {
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+    throw new Error("JWT_SECRET must be at least 32 characters.");
+  }
+
+  await connectDB();
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+startServer().catch((error) => {
+  console.error("Server startup failed:", error.message);
+  process.exit(1);
+});
