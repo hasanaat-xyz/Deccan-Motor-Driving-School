@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./App.css";
 
 // Change line 4 from this:
-// const API = "https://deccan-motor-driving-school.onrender.com";
+ const API = "https://deccan-motor-driving-school.onrender.com";
 
 const initialForm = {
   fullName: "",
