@@ -1,7 +1,7 @@
-* {
-box-sizing: border-box;
-
+- {
+  box-sizing: border-box;
 }
+
 :root {
   font-family: Inter, Arial, sans-serif;
   color: #26332c;
@@ -150,12 +150,13 @@ p {
 
 .app-layout {
   min-height: 100vh;
+  display: flex;
 }
 
 .sidebar {
   position: fixed;
   inset: 0 auto 0 0;
-  z-index: 5;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   width: 250px;
@@ -163,6 +164,7 @@ p {
   overflow-y: auto;
   background: #152b23;
   color: white;
+  transition: transform 0.3s ease-in-out;
 }
 
 .sidebar-brand {
@@ -233,9 +235,32 @@ p {
 }
 
 .main-content {
+  flex-grow: 1;
+  min-width: 0;
   min-height: 100vh;
   margin-left: 250px;
   padding: 30px 38px 55px;
+}
+
+/* Hamburger menu button (hidden on desktop) */
+.hamburger-button {
+  display: none;
+  background: transparent;
+  border: 1px solid #dce5dd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 18px;
+  color: #183c30;
+  cursor: pointer;
+}
+
+/* Backdrop for mobile */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 90;
 }
 
 /* ==============================
@@ -827,17 +852,31 @@ table,
 }
 
 /* ==============================
-   RESPONSIVE TABLET
+   RESPONSIVE TABLET & MOBILE DRAWER
 ============================== */
 
 @media (max-width: 1100px) {
   .sidebar {
-    width: 220px;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: block;
   }
 
   .main-content {
-    margin-left: 220px;
-    padding: 25px;
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .hamburger-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .stats-grid {
@@ -849,145 +888,24 @@ table,
   }
 }
 
-/* ==============================
-   RESPONSIVE MOBILE
-============================== */
-
 @media (max-width: 700px) {
-  /* Sidebar and main-content overrides removed so the sidebar stays locked on the left */
-
-  .main-content {
-    padding: 20px 14px 35px;
-  }
-
-  .topbar {
-    margin-bottom: 22px;
-    padding-bottom: 17px;
-  }
-
-  .topbar h1 {
-    font-size: 21px;
-  }
-
-  .welcome-card {
-    padding: 22px;
-  }
-
-  .welcome-card h2 {
-    font-size: 22px;
-  }
-
   .stats-grid {
     grid-template-columns: 1fr;
     gap: 12px;
-  }
-
-  .stat-card {
-    padding: 19px;
-  }
-
-  .stat-card strong {
-    font-size: 25px;
-  }
-
-  .quick-actions {
-    align-items: stretch;
-    flex-direction: column;
-    padding: 18px;
-  }
-
-  .quick-actions h2 {
-    margin-bottom: 7px;
-  }
-
-  .quick-actions button {
-    width: 100%;
-    text-align: left;
-  }
-
-  .form-card,
-  .content-card {
-    padding: 18px;
-  }
-
-  .section-heading h2 {
-    font-size: 18px;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
   }
 
-  .full-width {
-    grid-column: auto;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-
-  .form-actions button {
-    width: 100%;
-    min-height: 43px;
-  }
-
-  .search-form {
+  .quick-actions {
+    align-items: stretch;
     flex-direction: column;
   }
 
-  .search-form button {
+  .quick-actions button {
     width: 100%;
-    min-height: 43px;
-  }
-
-  .folio-overlay {
-    padding: 10px;
-  }
-
-  .folio-modal {
-    padding: 12px;
-  }
-
-  .candidate-folio {
-    padding: 17px;
-  }
-
-  .folio-header h1 {
-    font-size: 19px;
-  }
-
-  .folio-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .folio-footer {
-    gap: 12px;
-    margin-top: 45px;
-  }
-}
-
-/* ==============================
-   SMALL MOBILE
-============================== */
-
-@media (max-width: 380px) {
-  .login-card {
-    padding: 25px 20px;
-  }
-
-  .main-content {
-    padding-right: 10px;
-    padding-left: 10px;
-  }
-
-  .form-card,
-  .content-card {
-    padding: 14px;
-  }
-
-  .folio-footer {
-    flex-direction: column;
-    gap: 30px;
+    text-align: left;
   }
 }
 

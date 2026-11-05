@@ -248,6 +248,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const totalFees = Number(form.totalFees || 0);
   const paidFees = Number(form.paidFees || 0);
@@ -461,6 +462,11 @@ export default function App() {
   }
 
   async function deleteCandidate(candidateId) {
+    if (!candidateId) {
+      setError("Invalid candidate ID.");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this candidate record?")) {
       return;
     }
@@ -552,8 +558,16 @@ export default function App() {
   }
 
   return (
-    <div className="app-layout" style={{ display: "flex", flexDirection: "row", width: "100%", minHeight: "100vh" }}>
-      <aside className="sidebar no-print" style={{ flexShrink: 0 }}>
+    <div className="app-layout">
+      {/* Backdrop overlay for mobile when sidebar is open */}
+      {sidebarOpen && (
+        <div 
+          className="sidebar-backdrop" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`sidebar no-print ${sidebarOpen ? "open" : ""}`}>
         <div className="sidebar-brand">
           <div className="brand-mark">DMDS</div>
           <div>
@@ -570,6 +584,7 @@ export default function App() {
               setPage("dashboard");
               setMessage("");
               setError("");
+              setSidebarOpen(false);
             }}
           >
             Dashboard
@@ -582,6 +597,7 @@ export default function App() {
               setPage("register");
               setMessage("");
               setError("");
+              setSidebarOpen(false);
             }}
           >
             Register Candidate
@@ -595,6 +611,7 @@ export default function App() {
               setMessage("");
               setError("");
               setSearchResults([]);
+              setSidebarOpen(false);
             }}
           >
             Search by Contact
@@ -607,6 +624,7 @@ export default function App() {
               setPage("candidates");
               setMessage("");
               setError("");
+              setSidebarOpen(false);
               await loadCandidates();
             }}
           >
@@ -623,17 +641,27 @@ export default function App() {
         </button>
       </aside>
 
-      <main className="main-content" style={{ flexGrow: 1, minWidth: 0 }}>
+      <main className="main-content">
         <header className="topbar no-print">
-          <div>
-            <h1>
-              {page === "dashboard" && "Dashboard"}
-              {page === "register" && "Candidate Registration"}
-              {page === "search" && "Search Candidates"}
-              {page === "candidates" && "All Candidates"}
-            </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+            <button
+              type="button"
+              className="hamburger-button no-print"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Toggle Menu"
+            >
+              ☰
+            </button>
+            <div>
+              <h1>
+                {page === "dashboard" && "Dashboard"}
+                {page === "register" && "Candidate Registration"}
+                {page === "search" && "Search Candidates"}
+                {page === "candidates" && "All Candidates"}
+              </h1>
 
-            <p>Deccan Motor Driving School Admin Portal</p>
+              <p>Deccan Motor Driving School Admin Portal</p>
+            </div>
           </div>
         </header>
 
