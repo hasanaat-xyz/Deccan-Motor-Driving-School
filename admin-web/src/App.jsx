@@ -460,6 +460,33 @@ export default function App() {
     }
   }
 
+  async function deleteCandidate(candidateId) {
+    if (!window.confirm("Are you sure you want to delete this candidate record?")) {
+      return;
+    }
+
+    setError("");
+    setMessage("");
+    setLoading(true);
+
+    try {
+      await request(`/api/candidates/${candidateId}`, {
+        method: "DELETE",
+      });
+
+      setMessage("Candidate deleted successfully.");
+
+      await loadCandidates();
+      if (search.trim()) {
+        setSearchResults((prev) => prev.filter((c) => (c._id || c.id) !== candidateId));
+      }
+    } catch (err) {
+      setError(err.message || "Failed to delete candidate.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function updateForm(event) {
     const { name, value } = event.target;
 
@@ -1029,6 +1056,7 @@ export default function App() {
             <CandidateTable
               candidates={displayedCandidates}
               onView={setSelectedCandidate}
+              onDelete={deleteCandidate}
             />
           </section>
         )}
@@ -1053,6 +1081,7 @@ export default function App() {
             <CandidateTable
               candidates={candidates}
               onView={setSelectedCandidate}
+              onDelete={deleteCandidate}
             />
           </section>
         )}
@@ -1068,7 +1097,7 @@ export default function App() {
   );
 }
 
-function CandidateTable({ candidates, onView }) {
+function CandidateTable({ candidates, onView, onDelete }) {
   if (!candidates || candidates.length === 0) {
     return (
       <div className="empty-state">
@@ -1093,52 +1122,62 @@ function CandidateTable({ candidates, onView }) {
             <th>Paid</th>
             <th>Balance</th>
             <th>Status</th>
-            <th className="no-print">Details</th>
+            <th className="no-print">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {candidates.map((candidate) => (
-            <tr
-              key={
-                candidate._id ||
-                candidate.id ||
-                `${candidate.fullName}-${getMobile1(candidate)}`
-              }
-            >
-              <td>{candidate.fullName || "—"}</td>
-              <td>{candidate.fatherName || "—"}</td>
-              <td>{getMobile1(candidate) || "—"}</td>
-              <td>{candidate.mobileNumber2 || "—"}</td>
-              <td>{formatDate(candidate.admissionDate)}</td>
-              <td>
-                {candidate.trainingTimeFrom && candidate.trainingTimeTo
-                  ? `${formatTime(candidate.trainingTimeFrom)} - ${formatTime(candidate.trainingTimeTo)}`
-                  : "—"}
-              </td>
-              <td>₹{Number(candidate.totalFees || 0).toLocaleString("en-IN")}</td>
-              <td>₹{Number(candidate.paidFees || 0).toLocaleString("en-IN")}</td>
-              <td>₹{getBalance(candidate).toLocaleString("en-IN")}</td>
-              <td>
-                <span
-                  className={`status-tag ${(candidate.trainingStatus || "Not Started")
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`}
-                >
-                  {candidate.trainingStatus || "Not Started"}
-                </span>
-              </td>
-              <td className="no-print">
-                <button
-                  type="button"
-                  className="table-action-button"
-                  onClick={() => onView(candidate)}
-                >
-                  View Details
-                </button>
-              </td>
-            </tr>
-          ))}
+          {candidates.map((candidate) => {
+            const candidateId = candidate._id || candidate.id;
+            return (
+              <tr
+                key={
+                  candidateId ||
+                  `${candidate.fullName}-${getMobile1(candidate)}`
+                }
+              >
+                <td>{candidate.fullName || "—"}</td>
+                <td>{candidate.fatherName || "—"}</td>
+                <td>{getMobile1(candidate) || "—"}</td>
+                <td>{candidate.mobileNumber2 || "—"}</td>
+                <td>{formatDate(candidate.admissionDate)}</td>
+                <td>
+                  {candidate.trainingTimeFrom && candidate.trainingTimeTo
+                    ? `${formatTime(candidate.trainingTimeFrom)} - ${formatTime(candidate.trainingTimeTo)}`
+                    : "—"}
+                </td>
+                <td>₹{Number(candidate.totalFees || 0).toLocaleString("en-IN")}</td>
+                <td>₹{Number(candidate.paidFees || 0).toLocaleString("en-IN")}</td>
+                <td>₹{getBalance(candidate).toLocaleString("en-IN")}</td>
+                <td>
+                  <span
+                    className={`status-tag ${(candidate.trainingStatus || "Not Started")
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`}
+                  >
+                    {candidate.trainingStatus || "Not Started"}
+                  </span>
+                </td>
+                <td className="no-print" style={{ display: "flex", gap: "6px" }}>
+                  <button
+                    type="button"
+                    className="table-action-button"
+                    onClick={() => onView(candidate)}
+                  >
+                    View
+                  </button>
+                  <button
+                    type="button"
+                    className="table-delete-button"
+                    style={{ background: "#f8d7da", color: "#842029", border: "0", padding: "8px 11px", borderRadius: "6px", cursor: "pointer" }}
+                    onClick={() => onDelete(candidateId)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
